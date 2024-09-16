@@ -42,23 +42,23 @@ function Starred() {
       }}
     >
       <MenuItem>
-          <ListItemText inset>Single</ListItemText>
-        </MenuItem>
-        <MenuItem>
-          <ListItemText inset>1.15</ListItemText>
-        </MenuItem>
-        <MenuItem>
-          <ListItemText inset>Double</ListItemText>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <Check />
-          </ListItemIcon>
+        <ListItemText inset>Single</ListItemText>
+      </MenuItem>
+      <MenuItem>
+        <ListItemText inset>1.15</ListItemText>
+      </MenuItem>
+      <MenuItem>
+        <ListItemText inset>Double</ListItemText>
+      </MenuItem>
+      <MenuItem>
+        <ListItemIcon>
+          <Check />
+        </ListItemIcon>
           Custom: 1.2
-        </MenuItem>
-        <Divider />
-        <MenuItem>
-          <ListItemText>Add space before paragraph</ListItemText>
+      </MenuItem>
+      <Divider />
+      <MenuItem>
+        <ListItemText>Add space before paragraph</ListItemText>
         </MenuItem>
         <MenuItem>
           <ListItemText>Add space after paragraph</ListItemText>
