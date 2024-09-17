@@ -35,7 +35,7 @@ function Profiles() {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar sx={{ width: 30, height: 30 }}
+            <Avatar sx={{ width: 34, height: 34 }}
     src="https://mui.com/static/images/avatar/1.jpg"
     alt="My Avatar"
     />
