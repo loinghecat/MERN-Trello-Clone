@@ -3,7 +3,7 @@ import { Box } from '@mui/material'
 function BoardContent() {
   return (
     <Box sx={{
-      backgroundColor:'primary.main',
+     borderTop:'1px solid #00bfa5',
       width: '100%',
       display: 'flex',
       alignItems: 'center',
