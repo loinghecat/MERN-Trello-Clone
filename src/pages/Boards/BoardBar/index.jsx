@@ -9,13 +9,13 @@ import Avatar from '@mui/material/Avatar'
 import AvatarGroup from '@mui/material/AvatarGroup'
 import Button from '@mui/material/Button'
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-const MENU_STYLE = { bgcolor:'white',
-  color:'primary.main',
+const MENU_STYLE = { bgcolor:'transparent',
+  color:'white',
   border:'none',
   paddingX:'5px',
   borderRadius:'4px',
-  '& .MuiSvgIcon-root':{
-    color:'primary.main' },
+  '.MuiSvgIcon-root':{
+    color:'white' },
   '&:hover':{
     bgcolor:'primary.50'}}
 function BoardBar() {
@@ -28,7 +28,8 @@ function BoardBar() {
       justifyContent: 'space-between',
       gap:2,
       overflowX: 'auto',
-      borderTop:'1px solid #00bfa5'
+      borderBottom:'1px solid white',
+      bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1976d2')
     }}>
       <Box sx={{
         display: 'flex',
@@ -68,24 +69,38 @@ function BoardBar() {
         alignItems: 'center',
         gap: 2
       }}>
-        <Button variant="outlined" startIcon={<PersonAddIcon/>}>invite</Button>
+        <Button 
+          variant="outlined" 
+          startIcon={<PersonAddIcon
+            sx={{
+              color:'white',
+              borderColor:'white',
+              '&:hover':{
+                borderColor:'white'
+              }
+            }}/>}>Invite</Button>
         <AvatarGroup max={3} sx={{
+          gap:'10px',
           '& .MuiAvatar-root':{
             width: 34,
             height: 34,
-          fontSize:16}
+            fontSize:16,
+          border:'none' }
         }}>
           <Tooltip title="Loi Nghe" alt ="Loi Nghe"> 
-            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+            <Avatar alt="Remy Sharp" src="https://mui.com/static/images/avatar/1.jpg" />
           </Tooltip>
           <Tooltip title="Loi Nghe" alt ="Loi Nghe"> 
-            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+            <Avatar alt="Remy Sharp" src="https://mui.com/static/images/avatar/1.jpg" />
           </Tooltip>
           <Tooltip title="Loi Nghe" alt ="Loi Nghe"> 
-            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+            <Avatar alt="Remy Sharp" src="https://mui.com/static/images/avatar/1.jpg" />
           </Tooltip>
           <Tooltip title="Loi Nghe" alt ="Loi Nghe"> 
-            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+            <Avatar alt="Remy Sharp" src="https://mui.com/static/images/avatar/1.jpg" />
+          </Tooltip>
+          <Tooltip title="Loi Nghe" alt ="Loi Nghe"> 
+            <Avatar alt="Remy Sharp" src="https://mui.com/static/images/avatar/1.jpg" />
           </Tooltip>
         </AvatarGroup>
       </Box>
