@@ -71,21 +71,25 @@ function BoardBar() {
       }}>
         <Button 
           variant="outlined" 
+          sx={{
+            color:'white',
+            borderColor:'white',
+            '&:hover':{
+              borderColor:'white'
+            }
+          }}
           startIcon={<PersonAddIcon
-            sx={{
-              color:'white',
-              borderColor:'white',
-              '&:hover':{
-                borderColor:'white'
-              }
-            }}/>}>Invite</Button>
+           />}>Invite</Button>
         <AvatarGroup max={3} sx={{
           gap:'10px',
           '& .MuiAvatar-root':{
             width: 34,
             height: 34,
             fontSize:16,
-          border:'none' }
+            border:'none',
+            color:'white',
+            cursor:'pointer',
+            '&: first-of-type':{ bgcolor:'#a4b0de'} }
         }}>
           <Tooltip title="Loi Nghe" alt ="Loi Nghe"> 
             <Avatar alt="Remy Sharp" src="https://mui.com/static/images/avatar/1.jpg" />
