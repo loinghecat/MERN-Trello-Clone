@@ -1,4 +1,4 @@
-import ModeSelect from '~/components/ModeSelect'
+import ModeSelect from '~/components/ModeSelect/ModeSelect'
 import Box from '@mui/material/Box'
 import AppsIcon from '@mui/icons-material/Apps'
 import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
@@ -14,7 +14,7 @@ import Starred from './Menus/Starred'
 import Templates from './Menus/Templates'
 import Tooltip from '@mui/material/Tooltip'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import AccountCircle from '@mui/icons-material/AccountCircle';
+
 import InputAdornment from '@mui/material/InputAdornment';
 import Profiles from './Menus/Profiles'
 import SearchIcon from '@mui/icons-material/Search';
