@@ -16,10 +16,10 @@ import ContentCut from '@mui/icons-material/ContentCut'
 import ContentCopy from '@mui/icons-material/ContentCopy'
 import ContentPaste from '@mui/icons-material/ContentPaste'
 import Cloud from '@mui/icons-material/Cloud'
-import theme from '~/theme'
+import { mapOrder } from '~/utils/sorts'
 
 
-function Column() {
+function Column({column}) {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
@@ -28,6 +28,7 @@ function Column() {
   const handleClose = () => {
     setAnchorEl(null)
   }
+  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
   return (
     <Box sx={{
       minWidth:'300px',
@@ -49,7 +50,7 @@ function Column() {
           fontWeight: 'bold',
           cursor: 'pointer',
           fontSize: '1rem'
-        }}>Column Title</Typography>
+        }}>{column?.title}</Typography>
         <Box>
           <Tooltip title="More options">
           <ExpandMoreIcon
@@ -97,7 +98,7 @@ function Column() {
           </Menu>
         </Box>
       </Box>
-     <ListCards />
+     <ListCards  cards={orderedCards}/>
       <Box sx={{
         height: (theme) => theme.trello.columnFooterHeight,
         p:2,

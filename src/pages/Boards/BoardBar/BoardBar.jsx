@@ -9,6 +9,7 @@ import Avatar from '@mui/material/Avatar'
 import AvatarGroup from '@mui/material/AvatarGroup'
 import Button from '@mui/material/Button'
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import {capitalizeFirstLetter} from '~/utils/formatters'
 const MENU_STYLE = { bgcolor:'transparent',
   color:'white',
   border:'none',
@@ -18,7 +19,7 @@ const MENU_STYLE = { bgcolor:'transparent',
     color:'white' },
   '&:hover':{
     bgcolor:'primary.50'}}
-function BoardBar() {
+function BoardBar({board}) {
   return (
     <Box sx={{
       width: '100%',
@@ -40,12 +41,12 @@ function BoardBar() {
           sx={MENU_STYLE
           }
           icon={<DashboardIcon />}
-          label="Loi Nghe"
+          label={board?.title}
           clickable/>
         <Chip
           sx={MENU_STYLE}
           icon={<VpnLockIcon />}
-          label="Public/ Private Workspace"
+          label={capitalizeFirstLetter(board?.type)}
           clickable/>
         <Chip
           sx={MENU_STYLE}
