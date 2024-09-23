@@ -11,15 +11,25 @@ import AddCardIcon from '@mui/icons-material/AddCard';
 import ListItemText from '@mui/material/ListItemText'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListCards from './ListCards/ListCards'
-
 import ContentCut from '@mui/icons-material/ContentCut'
 import ContentCopy from '@mui/icons-material/ContentCopy'
 import ContentPaste from '@mui/icons-material/ContentPaste'
 import Cloud from '@mui/icons-material/Cloud'
 import { mapOrder } from '~/utils/sorts'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { act } from 'react'
 
 
-function Column({column}) {
+function Column({ column }) {
+  const {attributes, listeners, setNodeRef, transform, transition} = useSortable({
+    id: column._id,
+    data:{ ...column } })
+  const dndKitColumnstyles = {
+    
+    transform: CSS.Translate.toString(transform),
+    transition
+  }
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
@@ -30,15 +40,20 @@ function Column({column}) {
   }
   const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
   return (
-    <Box sx={{
-      minWidth:'300px',
-      maxWidth:'300px',
-      bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : '#ebecf0'),
-      ml:2,
-      borderRadius: '6px',
-      height:'fit-content',
-      maxHeight:(theme) => `calc(${theme.trello.boardContentHeight} - ${theme.spacing(5)})`
-    }}>
+    <Box
+      ref={setNodeRef}
+      style={dndKitColumnstyles}
+      {...attributes}
+      {...listeners}
+      sx={{
+        minWidth:'300px',
+        maxWidth:'300px',
+        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : '#ebecf0'),
+        ml:2,
+        borderRadius: '6px',
+        height:'fit-content',
+        maxHeight:(theme) => `calc(${theme.trello.boardContentHeight} - ${theme.spacing(5)})`
+      }}>
       <Box sx={{
         height: (theme) => theme.trello.columnHeaderHeight,
         p:2,
@@ -53,14 +68,14 @@ function Column({column}) {
         }}>{column?.title}</Typography>
         <Box>
           <Tooltip title="More options">
-          <ExpandMoreIcon
-            sx={{ color:'text.primary',cursor:'pointer' }}
-            id="basic-column-dropdown"
-            aria-controls={open ? 'basic-menu-column-dropdown' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-            onClick={handleClick}/>
-           </Tooltip>
+            <ExpandMoreIcon
+              sx={{ color:'text.primary',cursor:'pointer' }}
+              id="basic-column-dropdown"
+              aria-controls={open ? 'basic-menu-column-dropdown' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+              onClick={handleClick}/>
+          </Tooltip>
           <Menu
             id="basic-menu-column-dropdown"
             anchorEl={anchorEl}
