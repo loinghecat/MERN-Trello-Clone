@@ -8,18 +8,18 @@ function ListColumns({columns}) {
     <SortableContext items={columns?.map(c=>c._id)} strategy={horizontalListSortingStrategy}>
       <Box sx={{
         bgcolor:'inherit',
-            width:'100%',
-            height:'100%',
-            display: 'flex',
-            overflowX: 'auto',
-            overflowY: 'hidden',
-            '&::-webkit-scrollbar-track': {
-              m:2
-            }
-          }}>
-            {columns?.map((column) => {
-              return <Column key={column._id} column={column}/>
-            })}
+        width:'100%',
+        height:'100%',
+        display: 'flex',
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        '&::-webkit-scrollbar-track': {
+          m:2
+        }
+      }}>
+        {columns?.map((column) => {
+          return <Column key={column._id} column={column}/>
+        })}
         <Box sx={{
           minWidth:'200px',
           maxWidth:'200px',
