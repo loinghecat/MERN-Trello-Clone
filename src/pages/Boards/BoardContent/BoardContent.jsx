@@ -2,13 +2,13 @@ import {useEffect,useState} from 'react'
 import { Box,  } from '@mui/material'
 import ListColumns from './ListColumns/ListColumns'
 import { mapOrder } from '~/utils/sorts'
-import { DndContext, PointerSensor,MouseSensor, TouchSensor, useSensor, useSensors, DragOverlay, defaultDropAnimationSideEffects } from '@dnd-kit/core'
+import { DndContext, PointerSensor,MouseSensor, TouchSensor, useSensor, useSensors, DragOverlay, defaultDropAnimationSideEffects, closestCorners } from '@dnd-kit/core'
 import {
   arrayMove
 } from '@dnd-kit/sortable'
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
-import { cloneDeep } from 'lodash'
+import { clone, cloneDeep, set } from 'lodash'
 const ACTIVE_DRAG__ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG__ITEM_TYPE_COLUMN',
   CARD: 'ACTIVE_DRAG__ITEM_TYPE_CARD'
@@ -25,6 +25,8 @@ function BoardContent({ board }) {
   const [activeDragItemId, setActiveDragItemId] = useState(null)
   const [activeDragItemData, setActiveDragItemData] = useState(null)
   const [activeDragItemType, setActiveDragItemType] = useState(null)
+  const [oldColumnWhenDraggingCard, setOldColumnWhenDraggingCard] = useState(null)
+
 
   useEffect(() => {
     const orderedColumns = mapOrder(board?.columns, board?.columnOrderIds, '_id')
@@ -37,16 +39,21 @@ function BoardContent({ board }) {
     setActiveDragItemId(event?.active?.id)
     setActiveDragItemData(event?.active?.data?.current)
     setActiveDragItemType(event?.active?.data?.current?.columnId ? ACTIVE_DRAG__ITEM_TYPE.CARD : ACTIVE_DRAG__ITEM_TYPE.COLUMN)
+    // If the active dragging item is a card, set the old column of the card
+    if (event?.active?.data?.current?.columnId) {
+      setOldColumnWhenDraggingCard(findColumnByCardId(event?.active?.id))
+    }
   }
   const handleDragOver = (event) => {
     if (activeDragItemType === ACTIVE_DRAG__ITEM_TYPE.COLUMN) return
     // console.log('handleDragOver: ', event)
     const { active, over } = event
     if (!active||!over) return
-
+    // Get data of the active dragging card
     const { id: activeDraggingCardId, data: { current: activeDraggingCardData } } = active
+    //Get data of the card being dragged over
     const { id: overCardId } = over
-
+    //Find the column of the active dragging card and the column of the card being dragged over by their cardId
     const activeColumn = findColumnByCardId(activeDraggingCardId)
     const overColumn = findColumnByCardId(overCardId)
     if (!activeColumn || !overColumn) return
@@ -85,24 +92,51 @@ function BoardContent({ board }) {
   const handleDragEnd = (event) => {
     // console.log('handleDragEnd: ', event)
     const { active, over } = event
-
-    if(activeDragItemType === ACTIVE_DRAG__ITEM_TYPE.CARD) {
-      // console.log('Dragging card animation')
-      return  
-    }
     if (!active||!over) return
-    if (active.id!==over.id) {
-      const oldIndex = orderedColumns.findIndex(c => c._id === active.id)
-      const newIndex = orderedColumns.findIndex(c => c._id === over.id)
-      const dndOrderedColumns = arrayMove(orderedColumns, oldIndex, newIndex)
-      // const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id)
-      // console.log('dndOrderedColumns: ',dndOrderedColumns)
-      // console.log('dndOrderedColumnsIds: ',dndOrderedColumnsIds)
-      setOrderedColumns(dndOrderedColumns)
+    // Handle card drag and drop
+    if (activeDragItemType === ACTIVE_DRAG__ITEM_TYPE.CARD) {
+    // Get data of the active dragging card
+      const { id: activeDraggingCardId, data: { current: activeDraggingCardData } } = active
+      //Get data of the card being dragged over
+      const { id: overCardId } = over
+      //Find the column of the active dragging card and the column of the card being dragged over by their cardId
+      const activeColumn = findColumnByCardId(activeDraggingCardId)
+      const overColumn = findColumnByCardId(overCardId)
+      if (!activeColumn || !overColumn) return
+      if (oldColumnWhenDraggingCard._id !== overColumn._id) {
+//asda
+      }else {
+        // This whole process has the same logic as the drag and drop between columns
+        const oldCardIndex = oldColumnWhenDraggingCard?.cards?.findIndex(card => card._id === activeDragItemId)
+        const newCardIndex = overColumn?.cards?.findIndex(card => card._id === overCardId)
+        const dndOrderedCards = arrayMove(oldColumnWhenDraggingCard.cards, oldCardIndex, newCardIndex)
+        setOrderedColumns(prevColumns => {
+          const nextColumns =cloneDeep(prevColumns)
+          const targetColumn = nextColumns.find(column => column._id === overColumn._id)
+          // Update the cards and cardOrderIds of the target column
+          targetColumn.cards = dndOrderedCards
+          targetColumn.cardOrderIds = dndOrderedCards.map(card => card._id)
+          //Return the newest state of the target column
+          return nextColumns
+        })
+      }
     }
+    // Handle column drag and drop
+    if (activeDragItemType === ACTIVE_DRAG__ITEM_TYPE.COLUMN) {
+      if (active.id!==over.id) {
+        const oldColumnIndex = orderedColumns.findIndex(c => c._id === active.id)
+        const newColumnIndex = orderedColumns.findIndex(c => c._id === over.id)
+        const dndOrderedColumns = arrayMove(orderedColumns, oldColumnIndex, newColumnIndex)
+        // const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id)
+        // console.log('dndOrderedColumns: ',dndOrderedColumns)
+        // console.log('dndOrderedColumnsIds: ',dndOrderedColumnsIds)
+        setOrderedColumns(dndOrderedColumns)
+      }
+    }
+    setOldColumnWhenDraggingCard(null)
     setActiveDragItemData(null)
     setActiveDragItemId(null)
-    setActiveDragItemType(null) 
+    setActiveDragItemType(null)
   }
   const customDropAnimation = {
     sideEffects: defaultDropAnimationSideEffects({
@@ -116,6 +150,7 @@ function BoardContent({ board }) {
   return (
     <DndContext 
       sensors={sensors}
+      collisionDetection={closestCorners}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}>
