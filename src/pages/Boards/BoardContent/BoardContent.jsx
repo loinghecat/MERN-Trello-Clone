@@ -1,14 +1,16 @@
-import {useEffect, useState} from 'react'
+import {useEffect, useState, useCallback, useRef} from 'react'
 import { Box} from '@mui/material'
 import ListColumns from './ListColumns/ListColumns'
 import { mapOrder } from '~/utils/sorts'
-import { DndContext, PointerSensor, MouseSensor, TouchSensor, useSensor, useSensors, DragOverlay, defaultDropAnimationSideEffects, closestCorners } from '@dnd-kit/core'
+import { DndContext, PointerSensor, MouseSensor, TouchSensor, useSensor, useSensors,
+  DragOverlay, defaultDropAnimationSideEffects, closestCorners, pointerWithin, rectIntersection, getFirstCollision, 
+  closestCenter} from '@dnd-kit/core'
 import {
   arrayMove
 } from '@dnd-kit/sortable'
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
-import { clone, cloneDeep, set } from 'lodash'
+import { clone, cloneDeep, last, set } from 'lodash'
 const ACTIVE_DRAG__ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG__ITEM_TYPE_COLUMN',
   CARD: 'ACTIVE_DRAG__ITEM_TYPE_CARD'
@@ -26,7 +28,7 @@ function BoardContent({ board }) {
   const [activeDragItemData, setActiveDragItemData] = useState(null)
   const [activeDragItemType, setActiveDragItemType] = useState(null)
   const [oldColumnWhenDraggingCard, setOldColumnWhenDraggingCard] = useState(null)
-
+  const lastOverId = useRef(null)
 
   useEffect(() => {
     const orderedColumns = mapOrder(board?.columns, board?.columnOrderIds, '_id')
@@ -179,10 +181,31 @@ function BoardContent({ board }) {
       }
     })
   }
+  const collisionDetectionStrategy = useCallback((args)=>{
+    if (activeDragItemType===ACTIVE_DRAG__ITEM_TYPE.COLUMN) {
+      return closestCorners({...args})
+    }
+    const pointerIntersections = pointerWithin(args)
+    const intersections = pointerIntersections?.length >0
+      ? pointerIntersections : rectIntersection(args)
+    let overId = getFirstCollision(intersections, 'id')
+    if (overId) {
+      const checkColumn = orderedColumns.find(column => column._id === overId)
+      if (checkColumn) {
+        overId = closestCenter({ ...args,
+          droppableContainers: args.droppableContainers.filter(container => container.id !== overId && checkColumn.cardOrderIds.includes(container.id))
+        })[0]?.id
+      }
+      lastOverId.current = overId
+      return [{id:overId}]
+    }
+    return lastOverId.current ? [{id:lastOverId.current}] : []
+  },[activeDragItemType,orderedColumns])
   return (
     <DndContext 
       sensors={sensors}
-      collisionDetection={closestCorners}
+      //collisionDetection={closestCorners} Encountered an error when using this option which the card would be flickering when dragging between columns
+      collisionDetection={collisionDetectionStrategy}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}>
