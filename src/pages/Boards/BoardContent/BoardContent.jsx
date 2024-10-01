@@ -186,13 +186,14 @@ function BoardContent({ board }) {
       return closestCorners({...args})
     }
     const pointerIntersections = pointerWithin(args)
-    const intersections = pointerIntersections?.length >0
-      ? pointerIntersections : rectIntersection(args)
-    let overId = getFirstCollision(intersections, 'id')
+    if(!pointerIntersections?.length) return 
+    // const intersections = pointerIntersections?.length >0
+    //   ? pointerIntersections : rectIntersection(args)
+    let overId = getFirstCollision(pointerIntersections, 'id')
     if (overId) {
       const checkColumn = orderedColumns.find(column => column._id === overId)
       if (checkColumn) {
-        overId = closestCenter({ ...args,
+        overId = closestCorners({ ...args,
           droppableContainers: args.droppableContainers.filter(container => container.id !== overId && checkColumn.cardOrderIds.includes(container.id))
         })[0]?.id
       }
