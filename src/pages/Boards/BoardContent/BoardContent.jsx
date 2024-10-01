@@ -10,7 +10,8 @@ import {
 } from '@dnd-kit/sortable'
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
-import { clone, cloneDeep, last, set } from 'lodash'
+import { cloneDeep, isEmpty} from 'lodash'
+import { generatePlaceHolderCard } from '~/utils/formatters'
 const ACTIVE_DRAG__ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG__ITEM_TYPE_COLUMN',
   CARD: 'ACTIVE_DRAG__ITEM_TYPE_CARD'
@@ -62,6 +63,11 @@ function BoardContent({ board }) {
       if (nextActiveColumn ) {
         //Remove the card in the active column
         nextActiveColumn.cards = nextActiveColumn.cards.filter(card => card._id !== activeDraggingCardId)
+        // If there is no card in the active column, add a placeholder card
+        if (isEmpty(nextActiveColumn.cards)) {
+          nextActiveColumn.cards=[generatePlaceHolderCard(nextActiveColumn)]
+        }
+
         //Remove the cardOrderIds in the active column
         nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map(card => card._id )
       }
@@ -72,6 +78,8 @@ function BoardContent({ board }) {
         const updatedActiveDraggingCardData = { ...activeDraggingCardData, columnId: nextOverColumn._id }
         // Add the card to the over column by the new index
         nextOverColumn.cards=nextOverColumn.cards.toSpliced(newCardIndex, 0, updatedActiveDraggingCardData)
+        // If there is a placeholder card in the over column, remove it
+       nextOverColumn.cards = nextOverColumn.cards.filter(card => !card.FE_PlaceholderCard)
         //Update the cardOrderIds in the over column
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id )
       }
