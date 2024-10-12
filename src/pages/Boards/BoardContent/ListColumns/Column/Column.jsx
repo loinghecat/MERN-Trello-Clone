@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { toast } from 'react-toastify'
 import { Box, Typography, Button, List , TextField} from '@mui/material'
 import { Tooltip } from '@mui/material'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
@@ -46,6 +47,7 @@ function Column({ column }) {
   const [newCardTitle, setNewCardTitle] = useState('')
   const addNewCard = () => {
     if (!newCardTitle) {
+      toast.error('Card title is required', { position:'bottom-right' })
       return
     }
     console.log('add new card')
