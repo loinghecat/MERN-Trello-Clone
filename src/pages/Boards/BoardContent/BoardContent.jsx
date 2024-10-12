@@ -2,12 +2,15 @@ import {useEffect, useState, useCallback, useRef} from 'react'
 import { Box} from '@mui/material'
 import ListColumns from './ListColumns/ListColumns'
 import { mapOrder } from '~/utils/sorts'
-import { DndContext, PointerSensor, MouseSensor, TouchSensor, useSensor, useSensors,
+import { DndContext,
+  //PointerSensor,
+  // MouseSensor,
+  // TouchSensor,
+  useSensor, useSensors,
   DragOverlay, defaultDropAnimationSideEffects, closestCorners, pointerWithin, rectIntersection, getFirstCollision, 
   closestCenter} from '@dnd-kit/core'
-import {
-  arrayMove
-} from '@dnd-kit/sortable'
+ import {MouseSensor, TouchSensor  } from '~/customLibraries/DndKitSensors'
+import {arrayMove} from '@dnd-kit/sortable'
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
 import { cloneDeep, isEmpty} from 'lodash'
@@ -18,7 +21,7 @@ const ACTIVE_DRAG__ITEM_TYPE = {
 }
 
 function BoardContent({ board }) {
-  const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
+  //const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
   const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 10 } })
   const touchSensor = useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 500 } })
 

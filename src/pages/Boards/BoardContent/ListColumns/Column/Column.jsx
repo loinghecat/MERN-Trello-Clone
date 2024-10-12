@@ -155,6 +155,7 @@ function Column({ column }) {
                 label="Enter card title..."
                 type="text"
                 size='small'
+                data-no-dnd = "true"
                 variant='outlined'
                 autoFocus
                 value={newCardTitle}
@@ -185,6 +186,7 @@ function Column({ column }) {
               }}>
                 <Button
                   onClick ={addNewCard}
+                  data-no-dnd = "true"
                   variant='contained'
                   color='success'
                   size='small'
