@@ -20,7 +20,7 @@ const ACTIVE_DRAG__ITEM_TYPE = {
   CARD: 'ACTIVE_DRAG__ITEM_TYPE_CARD'
 }
 
-function BoardContent({ board, createNewColumn ,createNewCard}) {
+function BoardContent({ board, createNewColumn ,createNewCard, moveColumn}) {
   //const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
   const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 10 } })
   const touchSensor = useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 500 } })
@@ -82,7 +82,7 @@ function BoardContent({ board, createNewColumn ,createNewCard}) {
         // Add the card to the over column by the new index
         nextOverColumn.cards=nextOverColumn.cards.toSpliced(newCardIndex, 0, updatedActiveDraggingCardData)
         // If there is a placeholder card in the over column, remove it
-       nextOverColumn.cards = nextOverColumn.cards.filter(card => !card.FE_PlaceholderCard)
+        nextOverColumn.cards = nextOverColumn.cards.filter(card => !card.FE_PlaceholderCard)
         //Update the cardOrderIds in the over column
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id )
       }
@@ -172,9 +172,7 @@ function BoardContent({ board, createNewColumn ,createNewCard}) {
         const oldColumnIndex = orderedColumns.findIndex(c => c._id === active.id)
         const newColumnIndex = orderedColumns.findIndex(c => c._id === over.id)
         const dndOrderedColumns = arrayMove(orderedColumns, oldColumnIndex, newColumnIndex)
-        // const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id)
-        // console.log('dndOrderedColumns: ',dndOrderedColumns)
-        // console.log('dndOrderedColumnsIds: ',dndOrderedColumnsIds)
+        moveColumn(dndOrderedColumns)
         setOrderedColumns(dndOrderedColumns)
       }
     }
