@@ -17,7 +17,7 @@ import ContentCopy from '@mui/icons-material/ContentCopy'
 import ContentPaste from '@mui/icons-material/ContentPaste'
 import Cloud from '@mui/icons-material/Cloud'
 import CloseIcon from '@mui/icons-material/Close'
-import { mapOrder } from '~/utils/sorts'
+
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { act } from 'react'
@@ -41,11 +41,11 @@ function Column({ column,createNewCard }) {
   const handleClose = () => {
     setAnchorEl(null)
   }
-  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
+  const orderedCards = column?.cards
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
   const toggleNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
   const [newCardTitle, setNewCardTitle] = useState('')
-  const addNewCard = async () => {
+  const addNewCard = () => {
     if (!newCardTitle) {
       toast.error('Card title is required', { position:'bottom-right' })
       return
@@ -54,7 +54,7 @@ function Column({ column,createNewCard }) {
       title: newCardTitle,
       columnId: column._id
     }
-    await createNewCard(newCardData)
+    createNewCard(newCardData)
     toggleNewCardForm()
     setNewCardTitle('')
   }

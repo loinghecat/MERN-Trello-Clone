@@ -1,16 +1,16 @@
-import { Box, Typography, Button, TextField } from '@mui/material'
+import { Box, Button, TextField } from '@mui/material'
 import Column from './Column/Column'
 import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 import { useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 
-import {toast} from 'react-toastify'
-function ListColumns({columns, createNewColumn,createNewCard}) {
+import { toast } from 'react-toastify'
+function ListColumns({columns, createNewColumn, createNewCard }) {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const toggleNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
   const [newColumnTitle, setNewColumnTitle] = useState('')
-  const addNewColumn = async () => {
+  const addNewColumn = () => {
     if (!newColumnTitle) {
       toast.error('Column title is required')
       return
@@ -18,12 +18,12 @@ function ListColumns({columns, createNewColumn,createNewCard}) {
     const newColumnData = {
       title: newColumnTitle
     }
-    await createNewColumn(newColumnData)
+    createNewColumn(newColumnData)
     toggleNewColumnForm()
     setNewColumnTitle('')
   }
   return (
-    <SortableContext items={columns?.map(c=>c._id)} strategy={horizontalListSortingStrategy}>
+    <SortableContext items={columns?.map( c => c._id)} strategy={horizontalListSortingStrategy}>
       <Box sx={{
         bgcolor:'inherit',
         width:'100%',
@@ -54,13 +54,13 @@ function ListColumns({columns, createNewColumn,createNewCard}) {
                 width:'100%',
                 justifyContent:'flex-start',
                 pl:2.5,
-                py:1,
+                py:1
               }}
             >
             Add new column
             </Button>
           </Box>
-          : 
+          :
           <Box sx={{
             minWidth:'250px',
             maxWidth:'250px',
@@ -112,7 +112,7 @@ function ListColumns({columns, createNewColumn,createNewCard}) {
                   border: '0.5px solid ',
                   borderColor: (theme) => theme.palette.success.main,
                   '&:hover':{
-                    bgColor: (theme) => theme.palette.success.main,
+                    bgColor: (theme) => theme.palette.success.main
                   }
                 }}
               >Add Column</Button>
