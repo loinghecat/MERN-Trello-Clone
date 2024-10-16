@@ -9,11 +9,13 @@ import { fetchBoardDetailsAPI,
   createNewCardAPI,
   updateBoardDetailsAPI,
   updateColumnDetailsAPI,
-  moveCardToDifferentColumnAPI } from '~/apis/index'
+  moveCardToDifferentColumnAPI,
+  deleteColumnDetailsAPI } from '~/apis/index'
 import { isEmpty } from 'lodash'
 import { mapOrder } from '~/utils/sorts'
 import { Box, Typography } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress';
+import { toast } from 'react-toastify'
 function Board() {
   const [board, setBoard] = useState(null)
   useEffect(() => {
@@ -100,6 +102,17 @@ function Board() {
     })
 
   }
+  // Delete column and cards in it
+  const deleteColumnDetails = (columnId) => {
+    const newBoard = { ...board }
+    newBoard.columns = newBoard.columns.filter(column => column._id !== columnId)
+    newBoard.columnOrderIds = newBoard.columnOrderIds.filter(id => id !== columnId)
+    setBoard(newBoard)
+    deleteColumnDetailsAPI(columnId).then(res => {
+      toast.success(res?.deleteResult)
+    })
+
+  }
   if (!board) {
     return (
       <Box sx={{
@@ -125,6 +138,7 @@ function Board() {
         moveColumn={moveColumn}
         moveCardInTheSameColumn={moveCardInTheSameColumn}
         moveCardToDifferentColumn={moveCardToDifferentColumn}
+        deleteColumnDetails={deleteColumnDetails}
       />
     </Container>
   )
