@@ -1,5 +1,5 @@
-import {useEffect, useState, useCallback, useRef} from 'react'
-import { Box} from '@mui/material'
+import { useEffect, useState, useCallback, useRef } from 'react'
+import { Box } from '@mui/material'
 import ListColumns from './ListColumns/ListColumns'
 
 import { DndContext,
@@ -7,20 +7,20 @@ import { DndContext,
   // MouseSensor,
   // TouchSensor,
   useSensor, useSensors,
-  DragOverlay, defaultDropAnimationSideEffects, closestCorners, pointerWithin, rectIntersection, getFirstCollision, 
-  closestCenter} from '@dnd-kit/core'
-import {MouseSensor, TouchSensor  } from '~/customLibraries/DndKitSensors'
+  DragOverlay, defaultDropAnimationSideEffects, closestCorners, pointerWithin, getFirstCollision
+} from '@dnd-kit/core'
+import { MouseSensor, TouchSensor } from '~/customLibraries/DndKitSensors'
 import { arrayMove } from '@dnd-kit/sortable'
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
-import { cloneDeep, isEmpty} from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import { generatePlaceHolderCard } from '~/utils/formatters'
 const ACTIVE_DRAG__ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG__ITEM_TYPE_COLUMN',
   CARD: 'ACTIVE_DRAG__ITEM_TYPE_CARD'
 }
 
-function BoardContent({ board, createNewColumn, createNewCard, moveColumn, moveCardInTheSameColumn, moveCardToDifferentColumn }) {
+function BoardContent({ board, deleteColumnDetails, createNewColumn, createNewCard, moveColumn, moveCardInTheSameColumn, moveCardToDifferentColumn }) {
   //const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
   const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 10 } })
   const touchSensor = useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 500 } })
@@ -185,7 +185,7 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn, moveC
         const dndOrderedColumns = arrayMove(orderedColumns, oldColumnIndex, newColumnIndex)
         setOrderedColumns(dndOrderedColumns)
 
-        moveColumn(dndOrderedColumns,oldColumnWhenDraggingCard)
+        moveColumn(dndOrderedColumns, oldColumnWhenDraggingCard)
       }
     }
     setOldColumnWhenDraggingCard(null)
@@ -202,12 +202,12 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn, moveC
       }
     })
   }
-  const collisionDetectionStrategy = useCallback((args)=>{
+  const collisionDetectionStrategy = useCallback((args ) => {
     if (activeDragItemType===ACTIVE_DRAG__ITEM_TYPE.COLUMN) {
-      return closestCorners({...args})
+      return closestCorners({ ...args })
     }
     const pointerIntersections = pointerWithin(args)
-    if(!pointerIntersections?.length) return 
+    if (!pointerIntersections?.length) return
     // const intersections = pointerIntersections?.length >0
     //   ? pointerIntersections : rectIntersection(args)
     let overId = getFirstCollision(pointerIntersections, 'id')
@@ -219,12 +219,12 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn, moveC
         })[0]?.id
       }
       lastOverId.current = overId
-      return [{id:overId}]
+      return [{ id:overId }]
     }
-    return lastOverId.current ? [{id:lastOverId.current}] : []
-  },[activeDragItemType,orderedColumns])
+    return lastOverId.current ? [{ id:lastOverId.current }] : []
+  }, [activeDragItemType, orderedColumns])
   return (
-    <DndContext 
+    <DndContext
       sensors={sensors}
       //collisionDetection={closestCorners} Encountered an error when using this option which the card would be flickering when dragging between columns
       collisionDetection={collisionDetectionStrategy}
@@ -238,7 +238,7 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn, moveC
         height: (theme) => theme.trello.boardContentHeight,
         p:'10px 0'
       }}>
-        <ListColumns columns={orderedColumns} createNewColumn={createNewColumn} createNewCard={createNewCard} />
+        <ListColumns columns={orderedColumns} createNewColumn={createNewColumn} deleteColumnDetails={deleteColumnDetails} createNewCard={createNewCard} />
         <DragOverlay dropAnimation={customDropAnimation}>
           {!activeDragItemType && null}
           { activeDragItemType === ACTIVE_DRAG__ITEM_TYPE.COLUMN && <Column column ={activeDragItemData}/>}

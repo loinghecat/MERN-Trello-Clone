@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { Box, Typography, Button, List , TextField} from '@mui/material'
+import { Box, Typography, Button, TextField } from '@mui/material'
 import { Tooltip } from '@mui/material'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import DragHandleIcon from '@mui/icons-material/DragHandle';
+import DragHandleIcon from '@mui/icons-material/DragHandle'
 import Divider from '@mui/material/Divider'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import AddCardIcon from '@mui/icons-material/AddCard';
+import AddCardIcon from '@mui/icons-material/AddCard'
 import ListItemText from '@mui/material/ListItemText'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListCards from './ListCards/ListCards'
@@ -17,14 +17,13 @@ import ContentCopy from '@mui/icons-material/ContentCopy'
 import ContentPaste from '@mui/icons-material/ContentPaste'
 import Cloud from '@mui/icons-material/Cloud'
 import CloseIcon from '@mui/icons-material/Close'
-
+import { useConfirm } from 'material-ui-confirm'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { act } from 'react'
 
 
-function Column({ column,createNewCard }) {
-  const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({
+function Column({ column, createNewCard,deleteColumnDetails }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column._id,
     data:{ ...column } })
   const dndKitColumnStyles = {
@@ -58,6 +57,18 @@ function Column({ column,createNewCard }) {
     toggleNewCardForm()
     setNewCardTitle('')
   }
+  const confirmDeleteColumn = useConfirm()
+  const handleDeleteColumn =() => {
+    confirmDeleteColumn({
+      description: 'This action will delete this column and all the cards in it. Are you sure you want to delete this column?',
+      title: 'Delete this column',
+      buttonOrder: ['confirm', 'cancel']
+    }).then(() => {
+      deleteColumnDetails(column._id)
+    }
+
+    ).catch( () => {})
+  }
   return (
     <div
       ref={setNodeRef}
@@ -90,7 +101,7 @@ function Column({ column,createNewCard }) {
           <Box>
             <Tooltip title="More options">
               <ExpandMoreIcon
-                sx={{ color:'text.primary',cursor:'pointer' }}
+                sx={{ color:'text.primary', cursor:'pointer' }}
                 id="basic-column-dropdown"
                 aria-controls={open ? 'basic-menu-column-dropdown' : undefined}
                 aria-haspopup="true"
@@ -102,12 +113,20 @@ function Column({ column,createNewCard }) {
               anchorEl={anchorEl}
               open={open}
               onClose={handleClose}
+              onClick={handleClose}
+
               MenuListProps={{
                 'aria-labelledby': 'basic-column-dropdown'
               }}
             >
-              <MenuItem>
-                <ListItemIcon><AddCardIcon fontSize="small" /></ListItemIcon>
+              <MenuItem sx={{
+                '&:hover':{
+                  color: 'success.light',
+                  '& .add-card-icon': { color: 'success.light' }
+                }
+              }}
+              onClick={toggleNewCardForm}>
+                <ListItemIcon><AddCardIcon className='add-card-icon' fontSize="small" /></ListItemIcon>
                 <ListItemText>Add new card</ListItemText>
               </MenuItem>
               <MenuItem>
@@ -123,9 +142,16 @@ function Column({ column,createNewCard }) {
                 <ListItemText>Paste</ListItemText>
               </MenuItem>
               <Divider />
-              <MenuItem>
-                <ListItemIcon><DeleteForeverIcon fontSize="small" /></ListItemIcon>
-                <ListItemText>Remove this column</ListItemText>
+              <MenuItem
+                onClick={handleDeleteColumn}
+                sx={{
+                  '&:hover':{
+                    color: 'warning.dark',
+                    '& .delete-forever-icon': { color: 'warning.dark' }
+                  }
+                }}>
+                <ListItemIcon><DeleteForeverIcon className='delete-forever-icon' fontSize="small" /></ListItemIcon>
+                <ListItemText>Delete this column</ListItemText>
               </MenuItem>
               <MenuItem>
                 <ListItemIcon><Cloud fontSize="small" /></ListItemIcon>
@@ -148,7 +174,7 @@ function Column({ column,createNewCard }) {
               justifyContent: 'space-between'
             }}>
               <Button startIcon={<AddCardIcon/>} onClick={toggleNewCardForm}>Add new card</Button>
-              <Tooltip title='Drag to move'><DragHandleIcon sx={{cursor:'pointer'}}/></Tooltip>
+              <Tooltip title='Drag to move'><DragHandleIcon sx={{ cursor:'pointer' }}/></Tooltip>
             </Box>
             :
             <Box sx={{
@@ -169,10 +195,10 @@ function Column({ column,createNewCard }) {
                 sx={{
                   '& label':{ color:'text.primary' },
                   '& input':{
-                    color: (theme)=> theme.palette.primary.main,
+                    color: (theme ) => theme.palette.primary.main,
                     bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : 'white')
                   },
-                  '& label.Mui-focused':{ color: (theme)=> theme.palette.primary.main },
+                  '& label.Mui-focused':{ color: (theme) => theme.palette.primary.main },
                   '& .MuiOutlinedInput-root':{
                     '& fieldset':{
                       borderColor: (theme) => theme.palette.primary.main
@@ -188,7 +214,7 @@ function Column({ column,createNewCard }) {
               <Box sx={{
                 display:'flex',
                 alignItems:'center',
-                gap:1,
+                gap:1
               }}>
                 <Button
                   onClick ={addNewCard}
@@ -201,13 +227,13 @@ function Column({ column,createNewCard }) {
                     border: '0.5px solid ',
                     borderColor: (theme) => theme.palette.success.main,
                     '&:hover':{
-                      bgColor: (theme) => theme.palette.success.main,
+                      bgColor: (theme) => theme.palette.success.main
                     }
                   }}
                 >Add </Button>
                 <CloseIcon
                   fontSize='small'
-                  sx={{ color:(theme) => theme.palette.warning.light , cursor:'pointer'
+                  sx={{ color:(theme) => theme.palette.warning.light, cursor:'pointer'
                   }}
                   onClick ={toggleNewCardForm}/>
               </Box>
