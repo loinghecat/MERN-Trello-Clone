@@ -20,7 +20,7 @@ const ACTIVE_DRAG__ITEM_TYPE = {
   CARD: 'ACTIVE_DRAG__ITEM_TYPE_CARD'
 }
 
-function BoardContent({ board, createNewColumn, createNewCard, moveColumn, moveCardInTheSameColumn }) {
+function BoardContent({ board, createNewColumn, createNewCard, moveColumn, moveCardInTheSameColumn, moveCardToDifferentColumn }) {
   //const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
   const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 10 } })
   const touchSensor = useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 500 } })
@@ -47,7 +47,8 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn, moveC
     over,
     activeColumn,
     activeDraggingCardId,
-    activeDraggingCardData
+    activeDraggingCardData,
+    triggerFrom
   ) => {
     setOrderedColumns(prevColumns => {
       const overCardIndex = overColumn?.cards?.findIndex(card => card._id === overCardId)
@@ -85,6 +86,13 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn, moveC
         //Update the cardOrderIds in the over column
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id )
       }
+      if (triggerFrom === 'handleDragEnd') {
+        moveCardToDifferentColumn(
+          activeDraggingCardId,
+          oldColumnWhenDraggingCard._id,
+          nextOverColumn._id,
+          nextColumns)
+      }
       return nextColumns
     })
   }
@@ -119,7 +127,8 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn, moveC
         over,
         activeColumn,
         activeDraggingCardId,
-        activeDraggingCardData
+        activeDraggingCardData,
+        'handleDragOver'
       )
     }
   }
@@ -146,7 +155,8 @@ function BoardContent({ board, createNewColumn, createNewCard, moveColumn, moveC
           over,
           activeColumn,
           activeDraggingCardId,
-          activeDraggingCardData
+          activeDraggingCardData,
+          'handleDragEnd'
         )
       } else {
         //This part handle the case when the card is dragged within the same column
